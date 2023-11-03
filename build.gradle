@@ -1,27 +1,86 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        google()
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:4.0.1"
-        classpath 'com.google.gms:google-services:4.3.3'
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+File apiKeyPropertiesFile = rootProject.file("apikeys.properties")
+Properties apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apiKeyPropertiesFile))
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.1"
+
+    defaultConfig {
+        applicationId "com.karagathon.vesselreporting"
+        minSdkVersion 24
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GOOGLE_API_KEY", apikeyProperties['GOOGLE_API_KEY'])
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles    getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        applicationVariants.all{
+            variant
+                -> variant.outputs.each{
+                    output ->
+                        def name = "oreport${variant.versionName}.apk"
+                        output.outputFileName = name
+            }
+        }
+    }
+
+//    packagingOptions {
+//        exclude 'META-INF/DEPENDENCIES'
+//        exclude 'META-INF/LICENSE'
+//        exclude 'META-INF/LICENSE.txt'
+//        exclude 'META-INF/license.txt'
+//        exclude 'META-INF/NOTICE'
+//        exclude 'META-INF/NOTICE.txt'
+//        exclude 'META-INF/notice.txt'
+//        exclude 'META-INF/ASL2.0'
+//        exclude("META-INF/*.kotlin_module")
+//    }
+
+    compileOptions {
+        // Support for Java 8 features
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        mavenCentral()
-    }
-}
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'com.google.firebase:firebase-auth:19.3.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    testImplementation 'junit:junit:4.12'
+//    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.amplifyframework:core:1.1.2'
+    implementation 'com.google.firebase:firebase-database:19.3.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+    implementation 'com.amplifyframework:aws-storage-s3:1.1.2'
+    implementation 'com.amplifyframework:aws-auth-cognito:1.1.2'
+    implementation 'com.google.android.libraries.places:places:2.3.0'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+//    implementation 'dev.dworks.libs:volleyplus:+'
 }
